@@ -1,4 +1,3 @@
-
 import { auth, db } from "./firebase.js";
 
 import {
@@ -24,6 +23,7 @@ const CENTER = {
 };
 
 const SEARCH_RADIUS = 10;
+const FIXED_RATE_PER_KM = 18;
 
 let currentUser = null;
 
@@ -35,7 +35,7 @@ let pickupMarker = null;
 let dropMarker = null;
 let routeLine = null;
 
-let ratePerKm = 0;
+let ratePerKm = FIXED_RATE_PER_KM;
 let distanceKm = 0;
 let calculatedFare = 0;
 
@@ -214,6 +214,7 @@ async function loadNearbyPlaces() {
             .filter(Boolean);
 
         // Remove duplicate places
+
         nearbyPlaces = [
             ...new Map(
                 nearbyPlaces.map(place => [
@@ -289,6 +290,7 @@ async function searchDropPlaces(text) {
     try {
 
         // Search downloaded 10 KM places first
+
         let results = nearbyPlaces.filter(place => {
 
             return (
@@ -299,6 +301,7 @@ async function searchDropPlaces(text) {
         });
 
         // Online search if local database has no matching name
+
         if (results.length === 0) {
 
             const url = new URL(
@@ -574,42 +577,15 @@ async function getAddress(lat, lng) {
 
 
 // ======================================
-// LOAD ADMIN RATE
-// FIREBASE REALTIME DATABASE
+// FIXED RATE ₹18 PER KM
 // ======================================
 
 async function loadRate() {
 
-    try {
+    ratePerKm = FIXED_RATE_PER_KM;
 
-        const snapshot = await get(
-            ref(db, "settings/ratePerKm")
-        );
-
-        if (snapshot.exists()) {
-
-            ratePerKm = Number(snapshot.val());
-
-            $("rateText").textContent =
-                "Rate: ₹" + ratePerKm + " per KM";
-
-        } else {
-
-            ratePerKm = 0;
-
-            $("rateText").textContent =
-                "Admin has not set the rate yet.";
-
-        }
-
-    } catch (error) {
-
-        console.error(error);
-
-        $("rateText").textContent =
-            "Unable to load rate.";
-
-    }
+    $("rateText").textContent =
+        "Rate: ₹18 per KM";
 
 }
 
@@ -669,7 +645,7 @@ async function calculateFare() {
 
     if (ratePerKm <= 0) {
 
-        alert("Admin has not set the rate per KM.");
+        alert("Rate is not available.");
 
         return;
 
@@ -705,8 +681,10 @@ async function calculateFare() {
 
         distanceKm = route.distance / 1000;
 
+        // ₹18 PER KM FARE CALCULATION
+
         calculatedFare = Math.ceil(
-            distanceKm * ratePerKm
+            distanceKm * FIXED_RATE_PER_KM
         );
 
         $("distance").textContent =
@@ -716,6 +694,7 @@ async function calculateFare() {
             "₹ " + calculatedFare;
 
         // Draw road route
+
         if (routeLine) {
             map.removeLayer(routeLine);
         }
@@ -844,7 +823,7 @@ async function confirmBooking() {
 
             distance: Number(distanceKm.toFixed(2)),
 
-            ratePerKm: ratePerKm,
+            ratePerKm: FIXED_RATE_PER_KM,
 
             fare: calculatedFare,
 
