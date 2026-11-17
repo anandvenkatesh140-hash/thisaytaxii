@@ -374,5 +374,67 @@ button:disabled {
     color: #0f766e;
 }
 
+.admin-button-container {
+    display: flex;
+    justify-content: center;
+    margin: 30px auto;
+    padding: 0 15px;
+}
+
+.admin-button {
+    width: 280px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 20px;
+    border-radius: 16px;
+    text-decoration: none;
+    color: white;
+    background: linear-gradient(135deg, #111827, #2563eb);
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.25);
+    transition: 0.3s;
+}
+
+.admin-button-container {
+    display: flex;
+    justify-content: center;
+    margin: 30px auto;
+}
+
+.admin-button {
+    width: 260px;
+    padding: 17px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    border-radius: 50px;
+    background: linear-gradient(135deg, #FFD700, #FFB300, #FF9800);
+    color: #252525;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    box-shadow: 0 6px 20px rgba(255, 183, 0, 0.4);
+    border: 2px solid #fff0a6;
+    transition: all 0.3s ease;
+}
+
+.admin-button:hover {
+    transform: translateY(-4px) scale(1.03);
+    background: linear-gradient(135deg, #FFE766, #FFC107);
+    box-shadow: 0 10px 28px rgba(255, 183, 0, 0.55);
+}
+
+.admin-icon {
+    font-size: 22px;
+}
+
+.admin-arrow {
+    font-size: 20px;
+}
+
+
+
 
 }
