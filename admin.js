@@ -9,15 +9,18 @@ import {
 
 import {
     ref,
-    get,
-    set,
     onValue,
     update
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 
 const ADMIN_UID = "nTn8xOy84jfWcOo9BjrYIqMagCC3";
 
+const FIXED_RATE_PER_KM = 18;
+
 const $ = (id) => document.getElementById(id);
+
+
+// ADMIN LOGIN
 
 $("adminLoginForm").addEventListener("submit", async (e) => {
 
@@ -41,6 +44,9 @@ $("adminLoginForm").addEventListener("submit", async (e) => {
 
 });
 
+
+// ADMIN AUTHENTICATION
+
 onAuthStateChanged(auth, async (user) => {
 
     if (user && user.uid === ADMIN_UID) {
@@ -49,7 +55,20 @@ onAuthStateChanged(auth, async (user) => {
         $("adminDashboard").classList.remove("hidden");
         $("adminLogout").classList.remove("hidden");
 
-        loadRate();
+        if ($("rateInput")) {
+            $("rateInput").value = FIXED_RATE_PER_KM;
+            $("rateInput").disabled = true;
+        }
+
+        if ($("rateMessage")) {
+            $("rateMessage").textContent =
+                "Fixed rate: ₹18 per KM";
+        }
+
+        if ($("saveRateBtn")) {
+            $("saveRateBtn").disabled = true;
+        }
+
         loadBookings();
 
     } else {
@@ -59,49 +78,20 @@ onAuthStateChanged(auth, async (user) => {
         $("adminLogout").classList.add("hidden");
 
         if (user) {
+
             await signOut(auth);
-            $("adminMessage").textContent = "Admin access only.";
+
+            $("adminMessage").textContent =
+                "Admin access only.";
+
         }
 
     }
 
 });
 
-async function loadRate() {
 
-    const snapshot = await get(ref(db, "settings/ratePerKm"));
-
-    $("rateInput").value = snapshot.val() || "";
-
-}
-
-$("saveRateBtn").onclick = async () => {
-
-    const rate = Number($("rateInput").value);
-
-    if (!Number.isFinite(rate) || rate <= 0) {
-
-        $("rateMessage").textContent =
-            "Please enter a valid rate.";
-
-        return;
-
-    }
-
-    try {
-
-        await set(ref(db, "settings/ratePerKm"), rate);
-
-        $("rateMessage").textContent =
-            "KM rate updated successfully!";
-
-    } catch (error) {
-
-        $("rateMessage").textContent = error.message;
-
-    }
-
-};
+// LOAD BOOKINGS
 
 function loadBookings() {
 
@@ -128,27 +118,31 @@ function loadBookings() {
             card.className = "admin-booking";
 
             const title = document.createElement("h3");
+
             title.textContent = "🚕 New Booking";
 
             const details = document.createElement("p");
 
             details.textContent =
                 `Customer: ${booking.email || "Customer"}
-Pickup: ${booking.pickupName}
-Drop: ${booking.dropName}
-Distance: ${booking.distanceKm} KM
-Fare: ₹${booking.fare}
-Date: ${booking.date}
-Time: ${booking.time}
-Status: ${booking.status}`;
+Pickup: ${booking.pickup || "Not available"}
+Drop: ${booking.drop || "Not available"}
+Distance: ${booking.distance ?? "Not available"} KM
+Rate: ₹${booking.ratePerKm || FIXED_RATE_PER_KM} per KM
+Fare: ₹${booking.fare ?? "Not available"}
+Date: ${booking.journeyDate || "Not available"}
+Time: ${booking.journeyTime || "Not available"}
+Status: ${booking.status || "Pending"}`;
 
             card.append(title, details);
 
             const status = document.createElement("strong");
-            status.textContent = booking.status;
+
+            status.textContent = booking.status || "Pending";
+
             card.appendChild(status);
 
-            if (booking.status === "Pending") {
+            if ((booking.status || "Pending") === "Pending") {
 
                 const accept = document.createElement("button");
 
@@ -174,9 +168,19 @@ Status: ${booking.status}`;
 
         });
 
+    }, (error) => {
+
+        console.error("Booking loading error:", error);
+
+        $("bookingList").textContent =
+            "Unable to load bookings: " + error.message;
+
     });
 
 }
+
+
+// UPDATE BOOKING STATUS
 
 async function updateStatus(id, status) {
 
@@ -194,6 +198,9 @@ async function updateStatus(id, status) {
 
 }
 
+
+// ADMIN LOGOUT
+
 $("adminLogout").onclick = async () => {
 
     await signOut(auth);
@@ -201,3 +208,4 @@ $("adminLogout").onclick = async () => {
     location.href = "admin.html";
 
 };
+
