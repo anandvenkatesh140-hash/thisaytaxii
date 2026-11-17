@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TSY TAXI | Book Your Ride</title>
+
+<link rel="stylesheet" href="style.css">
+
+<link rel="stylesheet"
+href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+
+<body>
+
+<header class="topbar">
+    <h2>🚕 TSY <span>TAXI</span></h2>
+    <button id="logoutBtn" class="logout-btn">Logout</button>
+</header>
+
+<main class="main-container">
+
+    <section class="welcome-section">
+        <h1>Where would you like to go?</h1>
+        <p>Book your ride easily and travel safely.</p>
+    </section>
+
+    <!-- CURRENT GPS LOCATION -->
+    <section class="location-card">
+
+        <h2>📍 Your Current Location</h2>
+
+        <p id="locationStatus">Detecting your location...</p>
+
+        <h3 id="currentAddress">Please wait...</h3>
+
+        <button id="detectBtn" class="secondary-btn">
+            USE MY CURRENT LOCATION
+        </button>
+
+    </section>
+
+    <!-- BOOKING SECTION -->
+    <section class="booking-card">
+
+        <h2>Book Your Ride 🚕</h2>
+
+        <!-- PICKUP GPS ONLY -->
+        <label>📍 Pickup Location (Current GPS)</label>
+
+        <input
+            id="pickupName"
+            placeholder="Your current location"
+            readonly
+        >
+
+        <p class="map-hint">
+            Pickup location will be detected automatically using GPS.
+        </p>
+
+        <!-- DROP SEARCH ONLY -->
+        <label>🏁 Drop Location (Search Your Village)</label>
+
+        <input
+            type="text"
+            id="dropName"
+            placeholder="Type your village or town name..."
+            autocomplete="off"
+        >
+
+        <div id="dropSuggestions" class="suggestions"></div>
+
+        <p class="map-hint">
+            Type your village name and select the correct place from suggestions.
+        </p>
+
+        <!-- MAP -->
+        <h3>📌 Location Map</h3>
+
+        <div id="map"></div>
+
+        <!-- DATE -->
+        <label>Journey Date</label>
+
+        <input
+            type="date"
+            id="journeyDate"
+            required
+        >
+
+        <!-- TIME -->
+        <label>Journey Time</label>
+
+        <input
+            type="time"
+            id="journeyTime"
+            required
+        >
+
+        <!-- FARE -->
+        <button id="calculateBtn" class="primary-btn">
+            CALCULATE FARE
+        </button>
+
+        <div class="fare-box">
+
+            <p>Distance</p>
+            <h2 id="distance">-- KM</h2>
+
+            <p>Estimated Fare</p>
+            <h1 id="fare">₹ --</h1>
+
+            <p id="rateText">Rate: Loading...</p>
+
+        </div>
+
+        <!-- CONFIRM -->
+        <button id="confirmBtn" class="confirm-btn" disabled>
+            CONFIRM BOOKING
+        </button>
+
+        <p id="bookingMessage"></p>
+
+    </section>
+
+</main>
+
+<script type="module" src="home.js"></script>
+
+</body>
+</html>

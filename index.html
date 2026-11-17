@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TSY TAXI | Login</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="auth-page">
+
+    <div class="brand">
+        <div class="brand-icon">🚕</div>
+        <h1>TSY <span>TAXI</span></h1>
+        <p>Your Journey, Our Priority</p>
+    </div>
+
+    <div class="auth-card">
+
+        <h2 id="formTitle">Welcome Back!</h2>
+        <p class="muted">Login to book your ride</p>
+
+        <form id="loginForm">
+
+            <input type="email" id="loginEmail"
+            placeholder="Email Address" required>
+
+            <input type="password" id="loginPassword"
+            placeholder="Password" required>
+
+            <button class="primary-btn" type="submit">
+                LOGIN
+            </button>
+
+        </form>
+
+        <form id="registerForm" class="hidden">
+
+            <input type="text" id="registerName"
+            placeholder="Your Name" required>
+
+            <input type="email" id="registerEmail"
+            placeholder="Email Address" required>
+
+            <input type="password" id="registerPassword"
+            placeholder="Create Password" minlength="6" required>
+
+            <button class="primary-btn" type="submit">
+                CREATE ACCOUNT
+            </button>
+
+        </form>
+
+        <p id="authMessage"></p>
+
+        <p class="switch-text">
+            <span id="switchLabel">New customer?</span>
+            <button id="switchBtn" type="button">Register</button>
+        </p>
+
+    </div>
+
+    <p class="footer-text">© 2026 TSY TAXI</p>
+
+</div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>

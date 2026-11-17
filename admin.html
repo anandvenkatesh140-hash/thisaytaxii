@@ -1,0 +1,85 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TSY TAXI | Admin</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="topbar">
+    <h2>🚕 TSY <span>ADMIN</span></h2>
+    <button id="adminLogout" class="logout-btn hidden">Logout</button>
+</header>
+
+<main class="admin-container">
+
+    <section id="adminLogin" class="auth-card">
+
+        <h2>Admin Login</h2>
+
+        <form id="adminLoginForm">
+
+            <input type="email" id="adminEmail"
+            placeholder="tsytaxii@gmail.com" required>
+
+            <input type="password" id="adminPassword"
+            placeholder="tsytaxii124" required>
+
+            <button class="primary-btn" type="submit">
+                ADMIN LOGIN
+            </button>
+
+        </form>
+
+        <p id="adminMessage"></p>
+
+    </section>
+
+    <section id="adminDashboard" class="hidden">
+
+        <div class="welcome-section">
+            <h1>Admin Dashboard</h1>
+            <p>Manage your taxi bookings and fares.</p>
+        </div>
+
+        <div class="rate-card">
+
+            <h2>⚙️ KM Rate Settings</h2>
+
+            <label>Rate Per KM (₹)</label>
+
+            <input type="number" id="rateInput"
+            min="1" placeholder="Enter rate">
+
+            <button id="saveRateBtn" class="primary-btn">
+                SAVE RATE
+            </button>
+
+            <p id="rateMessage"></p>
+
+        </div>
+
+        <div class="bookings-section">
+
+            <h2>📋 Customer Bookings</h2>
+
+            <div id="bookingList">
+                Loading bookings...
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+<script type="module" src="admin.js"></script>
+
+</body>
+</html>
