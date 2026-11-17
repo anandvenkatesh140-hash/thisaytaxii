@@ -9,13 +9,14 @@ import {
 
 import {
     ref,
+    get,
+    set,
     onValue,
     update
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 
 const ADMIN_UID = "nTn8xOy84jfWcOo9BjrYIqMagCC3";
-
-const FIXED_RATE_PER_KM = 18;
+const DEFAULT_RATE = 18;
 
 const $ = (id) => document.getElementById(id);
 
@@ -45,7 +46,7 @@ $("adminLoginForm").addEventListener("submit", async (e) => {
 });
 
 
-// ADMIN AUTHENTICATION
+// CHECK ADMIN LOGIN
 
 onAuthStateChanged(auth, async (user) => {
 
@@ -55,20 +56,7 @@ onAuthStateChanged(auth, async (user) => {
         $("adminDashboard").classList.remove("hidden");
         $("adminLogout").classList.remove("hidden");
 
-        if ($("rateInput")) {
-            $("rateInput").value = FIXED_RATE_PER_KM;
-            $("rateInput").disabled = true;
-        }
-
-        if ($("rateMessage")) {
-            $("rateMessage").textContent =
-                "Fixed rate: ₹18 per KM";
-        }
-
-        if ($("saveRateBtn")) {
-            $("saveRateBtn").disabled = true;
-        }
-
+        await loadRate();
         loadBookings();
 
     } else {
@@ -85,6 +73,82 @@ onAuthStateChanged(auth, async (user) => {
                 "Admin access only.";
 
         }
+
+    }
+
+});
+
+
+// LOAD RATE FROM FIREBASE
+
+async function loadRate() {
+
+    try {
+
+        const snapshot = await get(
+            ref(db, "settings/ratePerKm")
+        );
+
+        const rate = snapshot.exists()
+            ? Number(snapshot.val())
+            : DEFAULT_RATE;
+
+        $("rateInput").value = rate;
+
+        $("rateMessage").textContent =
+            "Current rate: ₹" + rate + " per KM";
+
+    } catch (error) {
+
+        console.error(error);
+
+        $("rateMessage").textContent =
+            "Unable to load rate: " + error.message;
+
+    }
+
+}
+
+
+// SAVE RATE
+
+$("saveRateBtn").addEventListener("click", async () => {
+
+    const rate = Number($("rateInput").value);
+
+    if (!Number.isFinite(rate) || rate <= 0 || rate > 1000) {
+
+        $("rateMessage").textContent =
+            "Enter a valid rate between ₹1 and ₹1000.";
+
+        return;
+
+    }
+
+    $("saveRateBtn").disabled = true;
+
+    $("rateMessage").textContent = "Saving rate...";
+
+    try {
+
+        await set(
+            ref(db, "settings/ratePerKm"),
+            rate
+        );
+
+        $("rateMessage").textContent =
+            "Rate updated successfully: ₹" + rate + " per KM";
+
+    } catch (error) {
+
+        console.error(error);
+
+        $("rateMessage").textContent =
+            "Rate save failed: " + error.message;
+
+    } finally {
+
+        $("saveRateBtn").disabled = false;
 
     }
 
@@ -115,6 +179,7 @@ function loadBookings() {
         entries.forEach(([id, booking]) => {
 
             const card = document.createElement("div");
+
             card.className = "admin-booking";
 
             const title = document.createElement("h3");
@@ -128,7 +193,7 @@ function loadBookings() {
 Pickup: ${booking.pickup || "Not available"}
 Drop: ${booking.drop || "Not available"}
 Distance: ${booking.distance ?? "Not available"} KM
-Rate: ₹${booking.ratePerKm || FIXED_RATE_PER_KM} per KM
+Rate: ₹${booking.ratePerKm ?? "Not available"} per KM
 Fare: ₹${booking.fare ?? "Not available"}
 Date: ${booking.journeyDate || "Not available"}
 Time: ${booking.journeyTime || "Not available"}
@@ -170,7 +235,7 @@ Status: ${booking.status || "Pending"}`;
 
     }, (error) => {
 
-        console.error("Booking loading error:", error);
+        console.error(error);
 
         $("bookingList").textContent =
             "Unable to load bookings: " + error.message;
@@ -208,4 +273,5 @@ $("adminLogout").onclick = async () => {
     location.href = "admin.html";
 
 };
+
 
