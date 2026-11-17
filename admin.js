@@ -16,7 +16,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 
 const ADMIN_UID = "nTn8xOy84jfWcOo9BjrYIqMagCC3";
-const DEFAULT_RATE = 18;
+const DEFAULT_RATE = 30;
 
 const $ = (id) => document.getElementById(id);
 
@@ -273,5 +273,4 @@ $("adminLogout").onclick = async () => {
     location.href = "admin.html";
 
 };
-
 
